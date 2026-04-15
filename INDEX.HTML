@@ -1,0 +1,281 @@
+<!DOCTYPE html>  <html lang="id">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>TREDIC INVICTUS | SYZEN</title>  
+    <script src="https://cdn.tailwindcss.com"></script>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">  
+    <style>  
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono&family=Inter:wght@400;600&display=swap');  
+        body { background-color: #020609; color: #ffffff; font-family: 'Inter', sans-serif; margin: 0; height: 100vh; overflow: hidden; }  
+        .orbitron { font-family: 'Orbitron', sans-serif; }  
+        
+        /* Layout */
+        .app-content { height: calc(100vh - 140px); overflow-y: auto; padding: 20px; scrollbar-width: none; }  
+        .app-content::-webkit-scrollbar { display: none; }
+        .card-main { background: #0d1117; border: 1px solid #1e293b; border-radius: 15px; padding: 18px; margin-bottom: 15px; }  
+        
+        /* UI Profile & Components */
+        #profile-overlay { display: none; position: fixed; inset: 0; background: #020609; z-index: 2000; overflow-y: auto; padding: 25px; animation: slideUp 0.3s ease; }
+        .profile-banner { background: linear-gradient(to bottom, #00f0ff22, transparent); border: 1px solid #1e293b; border-radius: 20px; padding: 30px 15px; text-align: center; margin-bottom: 20px; }
+        .avatar-glow { width: 90px; height: 90px; border-radius: 50%; border: 2px solid #00f0ff; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: #050a12; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); }
+
+        /* Tools Styling */
+        .tool-card { background: #050a12; border: 1px solid #1e293b; border-radius: 18px; padding: 20px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
+        .tool-card:active { transform: scale(0.98); background: #0d1117; }
+        .tool-icon-box { width: 50px; height: 50px; background: rgba(0, 240, 255, 0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #00f0ff; font-size: 20px; }
+        .tool-expand { display: none; padding: 20px; background: #080e16; border: 1px solid #1e293b; border-top: none; border-radius: 0 0 18px 18px; margin-top: -15px; margin-bottom: 15px; animation: fadeIn 0.3s ease; }
+        
+        .login-input, .input-box { background: #050a12; border: 1px solid #1e293b; border-radius: 12px; padding: 18px; width: 100%; color: white; outline: none; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+        .login-input input { background: transparent; border: none; outline: none; width: 100%; color: white; font-size: 14px; }
+        .btn-cyan { background: #00f0ff; color: #000; padding: 18px; border-radius: 12px; font-weight: 800; width: 100%; text-transform: uppercase; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #05080b; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #111; z-index: 100; }  
+        .nav-link { text-align: center; color: #4b5563; font-size: 10px; flex: 1; cursor: pointer; }  
+        .nav-link.active { color: #fff; }  
+        .nav-link i { font-size: 18px; display: block; margin-bottom: 4px; }  
+
+        #notif-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 85%; pointer-events: none; }  
+        .toast { background: #1a1e26; color: #ffffff; padding: 12px 20px; border-radius: 12px; border: 1px solid #334155; font-size: 12px; text-align: center; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); animation: slideDown 0.4s ease forwards; }  
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }  
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>  
+<body>  <div id="notif-box"></div>  
+
+<div id="profile-overlay">
+    <div class="flex items-center mb-6" onclick="toggleProfile()">
+        <i class="fa-solid fa-arrow-left text-xl mr-4"></i>
+        <span class="orbitron font-bold">BACK TO DASHBOARD</span>
+    </div>
+    <div class="profile-banner">
+        <div class="avatar-glow"><i class="fa-solid fa-user-shield text-4xl text-cyan-500"></i></div>
+        <h2 id="prof-name" class="orbitron text-2xl font-bold tracking-tighter">USER</h2>
+        <p class="text-cyan-400 text-[10px] font-bold tracking-[0.2em] mt-1">ROLE: FULUP</p>
+    </div>
+    <div class="card-main">
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <span class="text-xs text-gray-500">STATUS</span>
+            <span class="text-xs text-green-400 font-bold">PREMIUM ACTIVE</span>
+        </div>
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <span class="text-xs text-gray-500">REGION</span>
+            <span class="text-xs">INDONESIA</span>
+        </div>
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+            <span class="text-xs text-gray-500">EXPIRED</span>
+            <span class="text-xs orbitron">NEVER</span>
+        </div>
+    </div>
+    <div class="card-main opacity-50">
+        <h3 class="orbitron text-[10px] mb-3">SYSTEM LOGS</h3>
+        <p class="text-[9px] text-gray-600 mb-1">√ Authenticated via Tredic-Node-01</p>
+        <p class="text-[9px] text-gray-600 mb-1">√ Encrypted Handshake Complete</p>
+        <p class="text-[9px] text-gray-600">√ Access Level: FULUP-SYSTEM</p>
+    </div>
+    <button onclick="location.reload()" class="w-full py-4 border border-red-900/30 text-red-500 rounded-xl text-[10px] font-bold orbitron">LOGOUT SESSION</button>
+</div>
+
+<section id="login-screen" class="flex flex-col items-center justify-center h-screen p-8">  
+    <div class="w-full max-w-[340px] aspect-video mb-8 rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover">
+            <source src="https://files.catbox.moe/xql7vv.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <h1 class="orbitron text-2xl font-bold mb-1">Welcome</h1>  
+    <p class="text-gray-500 text-sm mb-10">Please sign in to continue</p>  
+    
+    <div class="w-full mb-8">
+        <div class="login-input"><i class="fa-solid fa-user text-gray-600"></i><input type="text" id="user-in" placeholder="Username"></div>
+        <div class="login-input"><i class="fa-solid fa-lock text-gray-600"></i><input type="password" id="pass-in" placeholder="Password"></div>
+    </div>
+    <button onclick="login()" class="btn-cyan orbitron">Login</button>  
+</section>  
+
+<section id="main-ui" style="display:none;">  
+    <header class="p-5 flex justify-between items-center border-b border-gray-900">  
+        <i class="fa-solid fa-bars text-xl"></i>  
+        <span class="orbitron text-sm font-bold tracking-widest">TREDIC INVICTUS</span>  
+        <i class="fa-solid fa-circle-user text-2xl text-cyan-500 cursor-pointer" onclick="toggleProfile()"></i>  
+    </header>  
+
+    <div class="app-content" id="root"></div>  
+
+    <nav class="bottom-nav">  
+        <div class="nav-link active" onclick="nav('home', this)"><i class="fa-solid fa-house"></i>Home</div>  
+        <div class="nav-link" onclick="nav('wa', this)"><i class="fa-brands fa-whatsapp"></i>WhatsApp</div>  
+        <div class="nav-link" onclick="nav('info', this)"><i class="fa-solid fa-bell"></i>Info</div>  
+        <div class="nav-link" onclick="nav('tools', this)"><i class="fa-solid fa-screwdriver-wrench"></i>Tools</div>  
+    </nav>  
+</section>  
+
+<script>  
+    let myUser = "GUEST";  
+    let currentTab = 'number';  
+
+    function showNotif(msg) {  
+        const box = document.getElementById('notif-box');  
+        const t = document.createElement('div');  
+        t.className = 'toast';  
+        t.innerText = msg;  
+        box.appendChild(t);  
+        setTimeout(() => { t.style.opacity = '0'; setTimeout(()=>t.remove(), 500); }, 3000);  
+    }  
+
+    function login() {  
+        const val = document.getElementById('user-in').value;  
+        myUser = val ? val.toUpperCase() : "USER";   
+        document.getElementById('prof-name').innerText = myUser;
+        document.getElementById('login-screen').style.display = 'none';  
+        document.getElementById('main-ui').style.display = 'block';   
+        nav('home');  
+    }  
+
+    function toggleProfile() {
+        const p = document.getElementById('profile-overlay');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleTool(id) {
+        const el = document.getElementById(id);
+        const all = document.querySelectorAll('.tool-expand');
+        all.forEach(x => { if(x.id !== id) x.style.display = 'none' });
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function launchWA() {  
+        const target = document.getElementById('wa-target-input').value;  
+        if(!target) return showNotif("ERROR: TARGET Null");  
+        if(currentTab === 'number') {  
+            showNotif(`BUG BERHASIL TERKIRIM KE NOMOR ${target} - CREDIT BY SYZEN`);  
+        } else {  
+            showNotif(`BUG TERKIRIM KE GRUP - CREDIT BY SYZEN`);  
+        }  
+    }  
+
+    function nav(page, el) {  
+        if(el) {  
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));  
+            el.classList.add('active');  
+        }  
+        const root = document.getElementById('root');  
+          
+        if(page === 'home') {  
+            root.innerHTML = `  
+                <div class="card-main flex justify-between items-center p-8 mb-5 border-l-4 border-cyan-600">  
+                    <div><p class="text-[10px] text-cyan-500 uppercase">Connected Server</p><h2 class="orbitron text-xl font-bold text-white tracking-wide">SV-${myUser}</h2></div>
+                    <span class="text-[9px] border border-cyan-800 text-cyan-400 px-3 py-1 rounded bg-cyan-950/20 uppercase">Active</span>  
+                </div>  
+                <div class="video-box h-[180px] border border-gray-800 rounded-2xl overflow-hidden relative mb-5">  
+                    <video autoplay loop muted playsinline class="w-full h-full object-cover"><source src="https://files.catbox.moe/79ywol.mp4" type="video/mp4"></video>  
+                    <div class="absolute bottom-4 left-4">  
+                        <h2 class="orbitron text-lg font-bold text-white uppercase">Tredic Invictus</h2>  
+                        <p class="text-[9px] text-gray-400 tracking-widest uppercase">CREDIT BY SYZEN</p>  
+                    </div>  
+                </div>  
+                <a href="https://chat.whatsapp.com/BYGkDTSYWfoFqj8QpkNbu0" class="card-main flex items-center justify-center gap-3 py-5 border-green-500/20 bg-green-950/10">  
+                    <i class="fa-brands fa-whatsapp text-2xl text-green-500"></i> <span class="font-bold text-xs uppercase">Join Official Community</span>  
+                </a>  
+            `;  
+        } else if(page === 'wa') {  
+            renderWA();  
+        } else if(page === 'info') {
+            root.innerHTML = `
+                <h2 class="orbitron text-cyan-500 text-lg font-bold mb-1 uppercase">Terms of Services</h2>  
+                <p class="text-gray-500 text-[10px] mb-8 uppercase tracking-widest">System Rule & Policies</p>
+                <div class="card-main">
+                    <h4 class="orbitron text-[10px] text-cyan-400 mb-2">01. NO RESELL</h4>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Dilarang memperjualbelikan akses TREDIC tanpa izin resmi dari Developer SYZEN.</p>
+                </div>
+                <div class="card-main border-l-2 border-red-500">
+                    <h4 class="orbitron text-[10px] text-red-500 mb-2">02. NO SPAM SYSTEM</h4>
+                    <p class="text-[10px] text-gray-500 leading-relaxed">Penyalahgunaan server stress test yang berlebihan akan memicu cooldown otomatis.</p>
+                </div>
+            `;
+        } else if(page === 'tools') {  
+            root.innerHTML = `  
+                <h2 class="orbitron text-cyan-500 text-lg font-bold mb-1 uppercase">Tools Center</h2>  
+                <p class="text-gray-500 text-[10px] mb-8 uppercase tracking-widest">5 Advanced Cyber Modules</p>  
+                
+                <div onclick="toggleTool('ddos')">
+                    <div class="tool-card"><div class="flex items-center gap-4"><div class="tool-icon-box"><i class="fa-solid fa-bolt"></i></div><div class="tool-info"><h3>L7 DDoS Attack</h3><p>Server Stress Test</p></div></div><i class="fa-solid fa-chevron-down text-gray-800 text-xs"></i></div>
+                </div>
+                <div id="ddos" class="tool-expand">
+                    <input type="text" class="input-box" placeholder="Target IP / URL">
+                    <button onclick="showNotif('DDoS Module Started...')" class="btn-cyan py-3 text-[10px] orbitron">LAUNCH ATTACK</button>
+                </div>
+
+                <div onclick="toggleTool('osint')">
+                    <div class="tool-card"><div class="flex items-center gap-4"><div class="tool-icon-box"><i class="fa-solid fa-magnifying-glass"></i></div><div class="tool-info"><h3>OSINT Tools</h3><p>Database Finder</p></div></div><i class="fa-solid fa-chevron-down text-gray-800 text-xs"></i></div>
+                </div>
+                <div id="osint" class="tool-expand">
+                    <input type="text" class="input-box" placeholder="Username / No. HP">
+                    <button onclick="showNotif('Scanning Database...')" class="btn-cyan py-3 text-[10px] orbitron">START SCAN</button>
+                </div>
+
+                <div onclick="toggleTool('net')">
+                    <div class="tool-card"><div class="flex items-center gap-4"><div class="tool-icon-box"><i class="fa-solid fa-wifi"></i></div><div class="tool-info"><h3>Network Sniffer</h3><p>Intercept Packet</p></div></div><i class="fa-solid fa-chevron-down text-gray-800 text-xs"></i></div>
+                </div>
+                <div id="net" class="tool-expand">
+                    <input type="text" class="input-box" placeholder="Gateway IP">
+                    <button onclick="showNotif('Monitoring Network...')" class="btn-cyan py-3 text-[10px] orbitron">EXECUTE SNIFF</button>
+                </div>
+
+                <div onclick="toggleTool('spam')">
+                    <div class="tool-card"><div class="flex items-center gap-4"><div class="tool-icon-box"><i class="fa-solid fa-envelope-open-text"></i></div><div class="tool-info"><h3>SMS Bomber</h3><p>Mass Message Spam</p></div></div><i class="fa-solid fa-chevron-down text-gray-800 text-xs"></i></div>
+                </div>
+                <div id="spam" class="tool-expand">
+                    <input type="text" class="input-box" placeholder="Phone Number">
+                    <button onclick="showNotif('Flooding SMS Target...')" class="btn-cyan py-3 text-[10px] orbitron">START BOMBER</button>
+                </div>
+
+                <div onclick="toggleTool('down')">
+                    <div class="tool-card"><div class="flex items-center gap-4"><div class="tool-icon-box"><i class="fa-solid fa-download"></i></div><div class="tool-info"><h3>Social Downloader</h3><p>HD Media Fetcher</p></div></div><i class="fa-solid fa-chevron-down text-gray-800 text-xs"></i></div>
+                </div>
+                <div id="down" class="tool-expand">
+                    <input type="text" class="input-box" placeholder="Paste URL Here">
+                    <button onclick="showNotif('Fetching Data...')" class="btn-cyan py-3 text-[10px] orbitron">DOWNLOAD</button>
+                </div>
+                <div class="h-10"></div>
+            `;  
+        }
+    }  
+
+    function renderWA() {  
+        document.getElementById('root').innerHTML = `  
+            <div class="card-main border-l-4 border-l-red-600 flex items-center gap-4 py-8 mb-6">  
+                <i class="fa-solid fa-bug text-red-600 text-3xl"></i>  
+                <div><h2 class="orbitron text-lg font-bold">WHATSAPP CRASH</h2><p class="text-[8px] text-gray-500 uppercase">Advanced Payload Injection Tool</p></div>  
+            </div>  
+            <div class="flex gap-2 mb-4">  
+                <button onclick="currentTab='number';renderWA()" class="flex-1 p-4 rounded-xl border ${currentTab==='number'?'border-cyan-500 text-cyan-400 bg-cyan-950/10':'border-gray-800 text-gray-600'} text-[10px] font-bold uppercase">Bug Number</button>  
+                <button onclick="currentTab='group';renderWA()" class="flex-1 p-4 rounded-xl border ${currentTab==='group'?'border-cyan-500 text-cyan-400 bg-cyan-950/10':'border-gray-800 text-gray-600'} text-[10px] font-bold uppercase">Bug Group</button>  
+            </div>  
+            <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-tighter">${currentTab==='number'?'Target Number':'WhatsApp Group Link'}</p>  
+            <div class="input-box">  
+                <i class="fa-solid ${currentTab==='number'?'fa-phone':'fa-link'} text-gray-600"></i>  
+                <input type="text" id="wa-target-input" class="bg-transparent w-full text-white outline-none placeholder:text-gray-700" placeholder="${currentTab==='number'?'+62xxxxxxxxxx':'https://chat.whatsapp...'}">  
+            </div>  
+            <p class="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-tighter">Select Payload</p>  
+            <select class="input-box text-white">  
+                ${currentTab==='number' ? `  
+                <option class="bg-[#05080b]">[ ⓧ BLANK ANDRO 𝒯 ]</option>  
+                <option class="bg-[#05080b]">[ ⓧ INVISIBLE FC ADRO 𝒯 ]</option>  
+                <option class="bg-[#05080b]">[ ⓧ INVISIBLE FC IOS 𝒯 ]</option>  
+                <option class="bg-[#05080b]">[ ⓧ KIL KUOTA C1 𝒯 ]</option>  
+                <option class="bg-[#05080b]">[ ⓧ FREZZER LAG+DELAY 𝒯 ]</option>  
+                ` : `
+                <option class="bg-[#05080b]">[ ⓧ KILL GB AJG 𝒯 ]</option>
+                `}  
+            </select>  
+            <button onclick="launchWA()" class="w-full bg-[#111827] border border-gray-800 p-5 rounded-2xl flex items-center justify-center gap-4 font-bold orbitron text-xs">  
+                <i class="fa-solid fa-rocket text-cyan-500"></i> Launch Attack  
+            </button>  
+        `;  
+    }  
+</script>
+</body>  
+</html>
